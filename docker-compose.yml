@@ -2,6 +2,7 @@ name: workmate
 
 x-backend: &backend
   build: ./backend
+  image: workmate-backend:dev
   env_file: .env
   environment:
     DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
@@ -42,8 +43,16 @@ services:
       timeout: 3s
       retries: 10
 
+  migrate:
+    <<: *backend
+    command: ["alembic", "upgrade", "head"]
+    restart: "no"
+
   api:
     <<: *backend
+    depends_on: &after-migrate
+      migrate:
+        condition: service_completed_successfully
     command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
     ports:
       - "127.0.0.1:8000:8000"
@@ -55,6 +64,7 @@ services:
 
   worker:
     <<: *backend
+    depends_on: *after-migrate
     command: ["celery", "-A", "app.worker:celery_app", "worker", "--loglevel=INFO", "--concurrency=2"]
 
 volumes:
