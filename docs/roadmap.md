@@ -15,11 +15,12 @@ Legend: `[x]` done and verified · `[ ]` open · `[~]` partially done (see note)
 - [x] Technical decisions D1–D9 approved (2026-11-19) ([architecture.md §5](architecture.md#5-technical-decisions))
 
 ## Phase 1 — Application foundation
-- [ ] Docker Compose: postgres (pgvector image), redis, api, worker, beat, frontend; health checks
-- [ ] `.env.example`; settings via pydantic-settings with validation
-- [ ] FastAPI app skeleton: module layout, structured JSON logging, error handlers, `/health` (db + redis)
-- [ ] Async SQLAlchemy + Alembic; initial migration: users, sessions, conversations, messages, tasks (minimal), audit_log
-- [ ] Celery app wired to Redis with a ping task
+- [~] Docker Compose: postgres (pgvector image), redis, api, worker with health checks — done; frontend pending (beat deferred to Phase 5, when it has jobs to dispatch)
+- [x] `.env.example`; settings via pydantic-settings with validation
+- [x] FastAPI app skeleton: structured JSON logging, `/health/live`, `/health/ready` (db + redis, timeouts, 503 when degraded)
+- [ ] Consistent API error responses (with auth increment)
+- [~] Async SQLAlchemy engine/session DI done; Alembic + initial migration (users, sessions, conversations, messages, tasks minimal, audit_log) pending
+- [x] Celery app wired to Redis with a ping task (verified round trip through the worker)
 - [ ] Auth: create-user CLI, login/logout/me, session cookie, CSRF header check, rate limit on login
 - [ ] Next.js (App Router, TS strict, Tailwind): login page, auth guard, dashboard showing service health and recent tasks
 - [ ] Typed API client; `/api/*` rewrite to backend

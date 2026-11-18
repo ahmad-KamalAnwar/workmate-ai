@@ -25,9 +25,14 @@ Modules are added in the phase that needs them; keep this list accurate.
 `docs/roadmap.md` is the implementation checklist. Work phase by phase; tick items only after verification; update it in the same change.
 
 ## Development commands
-Fill in as scaffolding lands; keep the real commands here.
-- Backend: `pytest`, `ruff check .`, `mypy .`, `alembic upgrade head`
-- Frontend: `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`
+Everything runs in Docker (host Python/Node are too old). First time: `cp .env.example .env` and set a password.
+- Start / stop: `docker compose up -d --build` / `docker compose down`
+- Health: `http://127.0.0.1:8000/health/ready` (API docs at `/docs`)
+- Backend checks: `docker compose exec api sh -c "pytest -q && ruff check . && ruff format --check . && mypy app tests"`
+- Unit tests only: `docker compose exec api pytest -q -m "not integration"`
+- Logs: `docker compose logs -f api worker`
+- After changing backend dependencies: `docker compose run --rm api uv lock`, then rebuild.
+- Frontend: added later in Phase 1.
 
 ## Standards
 - Details live in `.claude/rules/` (backend, frontend, ai-providers, security, testing). Do not duplicate them here.
