@@ -78,7 +78,7 @@ Docker Compose services: `frontend` (Next.js), `api` (FastAPI/uvicorn), `worker`
 
 ## 5. Technical decisions
 
-Status: **Proposed** until approved. Record changes here when a decision is made or revised.
+Status: **Approved 2026-11-19** — all recommendations accepted. Record changes here when a decision is revised.
 
 | # | Decision | Recommendation | Alternatives |
 |---|---|---|---|

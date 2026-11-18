@@ -12,7 +12,7 @@ Legend: `[x]` done and verified · `[ ]` open · `[~]` partially done (see note)
 - [x] AI provider design and routing — [ai-gateway.md](ai-gateway.md)
 - [x] Security design — [security.md](security.md)
 - [x] Repository structure (below)
-- [ ] Technical decisions D1–D9 approved ([architecture.md §5](architecture.md#5-technical-decisions))
+- [x] Technical decisions D1–D9 approved (2026-11-19) ([architecture.md §5](architecture.md#5-technical-decisions))
 
 ## Phase 1 — Application foundation
 - [ ] Docker Compose: postgres (pgvector image), redis, api, worker, beat, frontend; health checks
