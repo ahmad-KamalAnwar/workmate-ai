@@ -17,8 +17,8 @@ Phase column = when the table is introduced.
 
 | Table | Key columns | Phase |
 |---|---|---|
-| `conversations` | user_id, title, created_at, archived_at | 1 |
-| `messages` | conversation_id, role (`user`/`assistant`/`system`/`tool`), content, task_id?, ai_call_id?, created_at | 1 |
+| `conversations` | user_id, title, created_at, archived_at | 2 |
+| `messages` | conversation_id, role (`user`/`assistant`/`system`/`tool`), content, task_id?, ai_call_id?, created_at | 2 |
 | `tasks` | user_id, conversation_id?, source (`chat`/`schedule`), title, status (`pending`/`planning`/`running`/`awaiting_approval`/`succeeded`/`failed`/`cancelled`), plan jsonb, error, created_at, started_at, finished_at | 1 (minimal), 3 (full) |
 | `task_steps` | task_id, seq, kind (`model`/`tool`), agent, tool_name?, input jsonb, output jsonb, status, error, started_at, finished_at | 3 |
 
@@ -63,7 +63,7 @@ Phase column = when the table is introduced.
 
 ## Indexes and constraints (beyond PKs/FKs)
 
-- `sessions(token_hash)`, `messages(conversation_id, created_at)`, `tasks(user_id, status)`
+- `sessions(token_hash)` unique, `sessions(user_id)`, `tasks(user_id, created_at)`, `audit_log(user_id, created_at)`; `messages(conversation_id, created_at)` in Phase 2
 - `scheduled_jobs(next_run_at) WHERE enabled AND cancelled_at IS NULL`
 - unique `tool_executions(idempotency_key)`, unique `job_runs(idempotency_key)`
 - `ai_calls(user_id, created_at)` for usage dashboards

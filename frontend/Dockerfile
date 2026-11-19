@@ -1,0 +1,14 @@
+FROM node:22-alpine
+
+ENV NEXT_TELEMETRY_DISABLED=1
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+RUN npm ci --no-audit --no-fund
+
+COPY . .
+RUN mkdir -p .next && chown -R node:node /app
+USER node
+
+EXPOSE 3000
+CMD ["npm", "run", "dev"]

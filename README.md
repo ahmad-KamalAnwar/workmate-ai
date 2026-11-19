@@ -9,5 +9,7 @@ Requires Docker with Compose v2.
 ```bash
 cp .env.example .env          # set POSTGRES_PASSWORD
 docker compose up -d --build
-curl http://127.0.0.1:8000/health/ready
+docker compose exec api python -m app.auth.cli create-user --email you@example.com
 ```
+
+Open http://127.0.0.1:3000 and sign in. API docs: http://127.0.0.1:8000/docs

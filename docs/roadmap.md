@@ -15,17 +15,23 @@ Legend: `[x]` done and verified · `[ ]` open · `[~]` partially done (see note)
 - [x] Technical decisions D1–D9 approved (2026-11-19) ([architecture.md §5](architecture.md#5-technical-decisions))
 
 ## Phase 1 — Application foundation
-- [~] Docker Compose: postgres (pgvector image), redis, api, worker with health checks — done; frontend pending (beat deferred to Phase 5, when it has jobs to dispatch)
+- [x] Docker Compose: postgres (pgvector image), redis, migrate (one-shot), api, worker, frontend; health checks; ports bound to 127.0.0.1 (beat deferred to Phase 5)
 - [x] `.env.example`; settings via pydantic-settings with validation
-- [x] FastAPI app skeleton: structured JSON logging, `/health/live`, `/health/ready` (db + redis, timeouts, 503 when degraded)
-- [ ] Consistent API error responses (with auth increment)
-- [~] Async SQLAlchemy engine/session DI done; Alembic + initial migration (users, sessions, conversations, messages, tasks minimal, audit_log) pending
+- [x] FastAPI app: structured JSON logging, `/health/live`, `/health/ready` (db + redis, timeouts, 503 when degraded)
+- [x] Uniform API error envelope `{error: {code, message, details}}`
+- [x] Async SQLAlchemy + Alembic; initial migration: users, sessions, audit_log, tasks (minimal); downgrade/upgrade exercised in tests; `alembic check` clean
 - [x] Celery app wired to Redis with a ping task (verified round trip through the worker)
-- [ ] Auth: create-user CLI, login/logout/me, session cookie, CSRF header check, rate limit on login
-- [ ] Next.js (App Router, TS strict, Tailwind): login page, auth guard, dashboard showing service health and recent tasks
-- [ ] Typed API client; `/api/*` rewrite to backend
-- [ ] Tests: backend unit + integration (auth, health, isolation), frontend component tests; ruff, mypy, eslint, tsc
-- [ ] Update CLAUDE.md commands and README quickstart
+- [x] Auth: create-user CLI, login/logout/me, argon2id, server-side sessions (idle + absolute expiry), httpOnly SameSite cookie, CSRF header check, login throttling, audit entries
+- [x] Tasks API: `GET /tasks` (per-user, newest first, bounded limit)
+- [x] Next.js 15 (App Router, TS strict, Tailwind 4): login page, auth redirect, dashboard with service status and recent tasks (loading/empty/error states)
+- [x] Typed API client from OpenAPI (`npm run gen:api`); `/api/*` rewrite to backend
+- [x] Tests: backend 40 (unit + integration on a migrated test DB), frontend 15; ruff, mypy strict, eslint, tsc, `next build` all pass
+- [x] CLAUDE.md commands and README quickstart updated
+
+Known limitations (carried forward):
+- Login throttling keys on client IP + email, but behind the Next.js proxy every request has the proxy's IP, so in practice it is per-email. Fine for single-user local use; revisit with trusted proxy headers in Phase 9.
+- `audit_log` is append-only by convention; DB-level enforcement (separate role without UPDATE/DELETE) is a Phase 9 item.
+- Conversations and messages tables moved to Phase 2, where the chat API uses them.
 
 ## Phase 2 — AI provider gateway
 - [ ] Interface, error hierarchy, ChatRequest/Response types

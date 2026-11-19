@@ -67,6 +67,22 @@ services:
     depends_on: *after-migrate
     command: ["celery", "-A", "app.worker:celery_app", "worker", "--loglevel=INFO", "--concurrency=2"]
 
+  frontend:
+    build: ./frontend
+    image: workmate-frontend:dev
+    environment:
+      API_INTERNAL_URL: http://api:8000
+      NEXT_TELEMETRY_DISABLED: "1"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules  # keep the image's dependencies, not the host's
+      - /app/.next
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+
 volumes:
   pgdata:
   redisdata:
